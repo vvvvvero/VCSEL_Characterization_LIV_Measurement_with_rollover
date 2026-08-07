@@ -1,4 +1,4 @@
-# b1500_powermeter_rollover
+# Keysight_B1500_Thorlabs_powermeter_PM101_PM400_rollover
 
 [![PyPI](https://img.shields.io/pypi/v/b1500-powermeter-rollover)](https://pypi.org/project/b1500-powermeter-rollover/)
 [![Python](https://img.shields.io/pypi/pyversions/b1500-powermeter-rollover)](https://pypi.org/project/b1500-powermeter-rollover/)
@@ -14,7 +14,7 @@
 
 | Feature | Detail |
 |---|---|
-| IV sweep | Point-by-point sourcing via B1500 SMU (IV or VI mode) |
+| IV sweep | Point-by-point sourcing via BKeysight  B1500 SMU (IV or VI mode) |
 | Optical power | Real-time Thorlabs PM100D / PM400 readout per point |
 | Rollover detection | **4 algorithms**: CUSUM (default), EWMA, Rolling Average, Regression (sklearn) |
 | GUI | PyQt5 scrollable control panel + live 2×2 matplotlib canvas |
