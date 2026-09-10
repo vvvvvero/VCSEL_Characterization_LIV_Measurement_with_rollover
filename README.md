@@ -1,5 +1,36 @@
 # Keysight_B1500_Thorlabs_powermeter_PM101_PM400_rollover
 
+## Series Context
+
+This repository is part of the Veronica GaoZhan VCSEL Reliability Test Series.
+
+- Series ID: VGZ-VRLS
+- Track: Single-device electrical-optical characterization
+- Position: 0 (baseline LIV and rollover)
+- Protocol name: liv_rollover
+- Author: Veronica Gao Zhan
+
+### Related Repositories
+
+- Step stress: https://github.com/vvvvvero/Laser_Optical_Reliablity_Tests_1_Step_Stress
+- Wafer mapping automation: https://github.com/vvvvvero/Cascade_Summit12k_Keysight_B1500_Thorlabs_Powermeter_TestAutomation
+- B1500 + Avantes synchronized spectra: https://github.com/vvvvvero/Keysight-B1500-Avantes-Spectrometer-Synchronized-Measurement
+
+### Standard Session Fields (Series V1)
+
+Runs should include these common identifiers in metadata and outputs:
+
+- project_id
+- wafer_id
+- device_id
+- session_id
+- parent_session_id
+- protocol_name
+- protocol_version
+- schema_version
+
+Series data contract: [SERIES_V1_SCHEMA.md](SERIES_V1_SCHEMA.md)
+
 [![PyPI](https://img.shields.io/pypi/v/b1500-powermeter-rollover)](https://pypi.org/project/b1500-powermeter-rollover/)
 [![Python](https://img.shields.io/pypi/pyversions/b1500-powermeter-rollover)](https://pypi.org/project/b1500-powermeter-rollover/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -170,4 +201,3 @@ for power in my_power_readings:
 ## Acknowledgements
 
 This project was developed using **vibe coding** — an AI-assisted development workflow powered by [GitHub Copilot](https://github.com/features/copilot). The architecture, code structure, and implementation were generated through iterative natural-language prompting and human review.
-

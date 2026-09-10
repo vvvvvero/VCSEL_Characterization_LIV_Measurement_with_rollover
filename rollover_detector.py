@@ -61,11 +61,25 @@ from typing import Any, Dict, Optional, Tuple
 
 import numpy as np
 
-try:
-    from sklearn.linear_model import LinearRegression as _LR, SGDRegressor as _SGDRegressor
-    SKLEARN_AVAILABLE = True
-except ImportError:
-    SKLEARN_AVAILABLE = False
+_LR: Optional[Any] = None
+_SGDRegressor: Optional[Any] = None
+_SKLEARN_AVAILABLE: Optional[bool] = None
+
+
+def _ensure_sklearn_models() -> bool:
+    """Import sklearn lazily so non-regression startup stays fast."""
+    global _LR, _SGDRegressor, _SKLEARN_AVAILABLE
+    if _SKLEARN_AVAILABLE is not None:
+        return _SKLEARN_AVAILABLE
+    try:
+        from sklearn.linear_model import LinearRegression as linear_regression, SGDRegressor as sgd_regressor
+    except ImportError:
+        _SKLEARN_AVAILABLE = False
+        return False
+    _LR = linear_regression
+    _SGDRegressor = sgd_regressor
+    _SKLEARN_AVAILABLE = True
+    return True
 
 from .config import SweepConfig
 
@@ -102,7 +116,7 @@ class RolloverDetector:
 
         # Online ML model (regression method only)
         self._sgd: Optional[Any] = None
-        if SKLEARN_AVAILABLE and self.method == "regression":
+        if self.method == "regression" and _ensure_sklearn_models():
             self._sgd = self._make_sgd()
 
     # ------------------------------------------------------------------
@@ -115,7 +129,7 @@ class RolloverDetector:
         self._ewma  = None
         self._S_neg = 0.0
         self._n     = 0
-        if SKLEARN_AVAILABLE and self.method == "regression":
+        if self.method == "regression" and _ensure_sklearn_models():
             self._sgd = self._make_sgd()
 
     def update(
@@ -236,7 +250,8 @@ class RolloverDetector:
         y = np.array(list(self._window), dtype=float)
         x = np.arange(n, dtype=float).reshape(-1, 1)
 
-        if SKLEARN_AVAILABLE:
+        sklearn_available = _ensure_sklearn_models()
+        if sklearn_available and _LR is not None:
             # Batch ML: LinearRegression (most reliable slope)
             model = _LR(fit_intercept=True)
             model.fit(x, y)
@@ -258,7 +273,7 @@ class RolloverDetector:
             slope=slope,
             regression_mean=mean,
             threshold_power=threshold_power,
-            sklearn=SKLEARN_AVAILABLE,
+            sklearn=sklearn_available,
         )
         return (slope < 0.0) and (mean < threshold_power), info
 
@@ -269,6 +284,8 @@ class RolloverDetector:
     @staticmethod
     def _make_sgd() -> Any:
         """Create and warm-start a SGDRegressor so coef_ is always defined."""
+        if not _ensure_sklearn_models() or _SGDRegressor is None:
+            raise RuntimeError("SGDRegressor requested but sklearn is unavailable")
         sgd = _SGDRegressor(
             loss="squared_error",
             learning_rate="constant",

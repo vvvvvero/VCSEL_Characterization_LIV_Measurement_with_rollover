@@ -178,7 +178,13 @@ class B1500Controller:
         self.connected = False
 
     def verify_connection(self) -> Tuple[bool, str]:
-        """Ping the instrument with ``*IDN?`` to confirm the session is live."""
+        """Ping the instrument with ``*IDN?`` to confirm the session is live.
+
+        Only clears ``connected`` when the VISA handles are genuinely gone.
+        Transient query failures (timeouts, busy instrument) return False but
+        do **not** clear the connected flag so that multi-site automation can
+        recover on the next attempt without requiring a manual reconnect.
+        """
         if not self.connected:
             return False, "Not connected (flag is False)"
         if not self.inst:
@@ -192,10 +198,8 @@ class B1500Controller:
                 response = self.inst.query(self.SCPI_IDN).strip()
                 if response:
                     return True, f"Connection verified: {response[:50]}"
-                self.connected = False
                 return False, "Empty IDN response"
         except Exception as e:
-            self.connected = False
             return False, f"Connection verification failed: {e}"
 
     # ------------------------------------------------------------------

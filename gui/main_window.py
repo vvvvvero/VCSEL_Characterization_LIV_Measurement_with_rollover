@@ -632,6 +632,13 @@ class SynchronizedMeasurementGUI(QMainWindow):
         if self.worker and self.worker.engine:
             self.worker.engine.stop()
             self.log("Stop requested…")
+        # Turn off the SMU output immediately when the user stops the test.
+        try:
+            smu_ch = self.spin_smu.value()
+            self.b1500.output_off(smu_ch)
+            self.log(f"SMU channel {smu_ch} output switched off.")
+        except Exception as exc:
+            self.log(f"Warning: could not switch off SMU output: {exc}")
 
     # ==================================================================
     # Worker callbacks (run in main thread via Qt signal dispatch)
